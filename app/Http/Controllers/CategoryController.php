@@ -41,19 +41,9 @@ class CategoryController extends Controller
         ]);
         $input = $request->all();
         $category = Category::create($input);
-        return redirect()->route('category.list')->with('success','Category created successfully');
+        return redirect()->route('category.list')->with('success','Категория успешно создана!');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-		//
-    }
 
     /**
      * Show the form for editing the specified resource.
@@ -81,7 +71,7 @@ class CategoryController extends Controller
         ]);
         $category = Category::find($id);
         $category->update($request->all());
-        return redirect()->route('category.list')->with('success','Category updated successfully');
+        return redirect()->route('category.list')->with('success','Категория успешно обновлена!');
     }
 
     /**
@@ -93,8 +83,8 @@ class CategoryController extends Controller
     public function destroy($id)
     {
         $category = Category::find($id);
-		if (!($category->materials->isEmpty())) return redirect()->route('category.list')->with('error','Category, than used in exists materials, cannot be deleted.');
+		if (!($category->materials->isEmpty())) return redirect()->route('category.list')->with('warn','Категория, используемая материалом, не может быть удалена!');
 		$category->delete();
-        return redirect()->route('category.list')->with('success','Category deleted successfully');
+        return redirect()->route('category.list')->with('success','Категория успешно удалена!');
     }
 }

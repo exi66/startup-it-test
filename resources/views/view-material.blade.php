@@ -1,45 +1,10 @@
-<!doctype html>
-<html lang="ru">
-<head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="csrf-token" content="{{ csrf_token() }}">
+@extends('layouts.app')
 
-    <!-- Bootstrap CSS -->
+@section('title')
+Материалы
+@endsection
 
-    <link rel="stylesheet" href="/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/css/bootstrap-utilities.css">
-    <link rel="stylesheet" href="/css/style.css">
-
-    <title>Материалы</title>
-</head>
-<body>
-<div class="main-wrapper">
-    <div class="content">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container">
-                <a class="navbar-brand" href="#">Test</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav">
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="{{ route('materials.list') }}">Материалы</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('tag.list') }}">Теги</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('category.list') }}">Категории</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-        <div class="container">
+@section('content')
             <h1 class="my-md-5 my-4">{{ $material->name }}</h1>
             <div class="row mb-3">
                 <div class="col-lg-6 col-md-8">
@@ -123,59 +88,43 @@
                     </ul>
                 </div>
             </div>
-        </div>
-    </div>
-    <footer class="footer py-4 mt-5 bg-light">
-        <div class="container">
-            <div class="row">
-                <div class="col text-muted">Test</div>
-            </div>
-        </div>
-    </footer>
+			<div class="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel"
+				 tabindex="-1">
+				<div class="modal-dialog modal-dialog-centered">
+					<div class="modal-content">
+						{!! Form::open(array('route' => 'url.store','method'=>'POST')) !!}
+						{!! Form::hidden('material_id', $material->id, array('class' => 'd-none')) !!}
+						<div class="modal-header">
+							<h5 class="modal-title" id="exampleModalToggleLabel">Добавить ссылку</h5>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							<div class="form-floating mb-3">
+								{!! Form::text('name', null, array('placeholder' => 'Добавьте подпись','class' => 'form-control','id' => 'floatingModalSignature')) !!}
+								<label for="floatingModalSignature">Подпись</label>
+								<div class="invalid-feedback">
+									Пожалуйста, заполните поле
+								</div>
 
-</div>
+							</div>
+							<div class="form-floating mb-3">
+								{!! Form::text('url', null, array('placeholder' => 'Добавьте ссылку','class' => 'form-control','id' => 'floatingModalLink')) !!}
+								<label for="floatingModalLink">Ссылка</label>
+								<div class="invalid-feedback">
+									Пожалуйста, заполните поле
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="submit" class="btn btn-primary">Добавить</button>
+							<button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Закрыть</button>
+						</div>
+						{!! Form::close() !!}
+					</div>
+				</div>
+			</div>			
+@endsection
 
-<div class="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel"
-     tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-			{!! Form::open(array('route' => 'url.store','method'=>'POST')) !!}
-			{!! Form::hidden('material_id', $material->id, array('class' => 'd-none')) !!}
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalToggleLabel">Добавить ссылку</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="form-floating mb-3">
-					{!! Form::text('name', null, array('placeholder' => 'Добавьте подпись','class' => 'form-control','id' => 'floatingModalSignature')) !!}
-                    <label for="floatingModalSignature">Подпись</label>
-                    <div class="invalid-feedback">
-                        Пожалуйста, заполните поле
-                    </div>
-
-                </div>
-                <div class="form-floating mb-3">
-					{!! Form::text('url', null, array('placeholder' => 'Добавьте ссылку','class' => 'form-control','id' => 'floatingModalLink')) !!}
-                    <label for="floatingModalLink">Ссылка</label>
-                    <div class="invalid-feedback">
-                        Пожалуйста, заполните поле
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="submit" class="btn btn-primary">Добавить</button>
-                <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Закрыть</button>
-            </div>
-			{!! Form::close() !!}
-        </div>
-    </div>
-</div>
-<!-- Optional JavaScript; choose one of the two! -->
-
-<!-- Option 1: Bootstrap Bundle with Popper -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
-        crossorigin="anonymous"></script>
-
-</body>
-</html>
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+@endpush

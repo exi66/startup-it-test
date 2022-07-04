@@ -41,19 +41,9 @@ class TagController extends Controller
         ]);
         $input = $request->all();
         $tag = Tag::create($input);
-        return redirect()->route('tag.list')->with('success','Tag created successfully');
+        return redirect()->route('tag.list')->with('success','Тег успешно создан!');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
 
     /**
      * Show the form for editing the specified resource.
@@ -81,7 +71,7 @@ class TagController extends Controller
         ]);
         $tag = Tag::find($id);
         $tag->update($request->all());
-        return redirect()->route('tag.list')->with('success','Tag updated successfully');
+        return redirect()->route('tag.list')->with('success','Тег успешно обновлен!');
     }
 
     /**
@@ -93,8 +83,8 @@ class TagController extends Controller
     public function destroy($id)
     {
         $tag = Tag::find($id);
-		if (!($tag->materials->isEmpty())) return redirect()->route('tag.list')->with('error','Tag, than used in exists materials, cannot be deleted.');
+		if (!($tag->materials->isEmpty())) return redirect()->route('tag.list')->with('warn','Тег, который используется в материалах не может быть удален!');
 		$tag->delete();
-        return redirect()->route('tag.list')->with('success','Tag deleted successfully');
+        return redirect()->route('tag.list')->with('success','Тег успешно удален!');
     }
 }

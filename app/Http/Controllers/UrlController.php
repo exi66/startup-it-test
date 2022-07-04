@@ -43,7 +43,7 @@ class UrlController extends Controller
         $input = $request->all();
 		$id = $request['material_id'];
         $url = Url::create($input);
-        return redirect()->route('materials.show', $id)->with('success','Url created successfully');
+        return redirect()->route('materials.show', $id)->with('success','Ссылка успешено создана!');
     }
 
     /**
@@ -91,6 +91,6 @@ class UrlController extends Controller
         $url = Url::find($id);
 		$id = $url->material_id;
 		$url->delete();
-        return redirect()->route('materials.show', $id)->with('success','Url deleted successfully');
+        return redirect()->route('materials.show', $id)->with('success','Ссылка успешно удалена!');
     }
 }

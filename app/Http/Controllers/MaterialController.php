@@ -90,7 +90,7 @@ class MaterialController extends Controller
     
         $input = $request->all();
         $material = Material::create($input);
-        return redirect()->route('materials.list')->with('success','Material created successfully');
+        return redirect()->route('materials.list')->with('success','Материал успешно создан!');
     }
 
     /**
@@ -142,7 +142,7 @@ class MaterialController extends Controller
 		
 		$material = Material::find($id);
         $material->update($input);
-        return redirect()->route('materials.list')->with('success','Material updated successfully');
+        return redirect()->route('materials.list')->with('success','Материал успешно обновлен!');
     }
 
     /**
@@ -154,7 +154,7 @@ class MaterialController extends Controller
     public function destroy($id)
     {
         Material::find($id)->delete();
-        return redirect()->route('materials.list')->with('success','Material deleted successfully');
+        return redirect()->route('materials.list')->with('success','Материал успешно удален!');
     }
 	
 	public function add_tag(Request $request, $id)
@@ -165,10 +165,10 @@ class MaterialController extends Controller
         $material = Material::find($id);
 		$tag = Tag::find($request->tag_id);
 		
-		if ($material->tags->contains($tag->id)) return redirect()->route('materials.show', $id)->with('warn','Material tag alredy attached');
+		if ($material->tags->contains($tag->id)) return redirect()->route('materials.show', $id)->with('warn','Тег и так присоединен к материалу!');
 		
 		$material->tags()->attach($tag->id);
-        return redirect()->route('materials.show', $id)->with('success','Material tag add successfully');
+        return redirect()->route('materials.show', $id)->with('success','Тег присоединен к материалу!');
     }
 	
 	public function rm_tag(Request $request, $id)
@@ -179,10 +179,10 @@ class MaterialController extends Controller
         $material = Material::find($id);
 		$tag = Tag::find($request->tag_id);
 		
-		if (!($material->tags->contains($tag->id))) return redirect()->route('materials.show', $id)->with('warn','Material tag alredy detached');
+		if (!($material->tags->contains($tag->id))) return redirect()->route('materials.show', $id)->with('warn','Тег и так неприсоединен к материалу!');
 		
 		$material->tags()->detach($tag->id);
-        return redirect()->route('materials.show', $id)->with('success','Material tag remove successfully');
+        return redirect()->route('materials.show', $id)->with('success','Тег успешно отсоединен от материала!');
     }
 	
 }
