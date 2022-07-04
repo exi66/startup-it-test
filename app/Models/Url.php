@@ -9,11 +9,18 @@ class Url extends Model
 {
     use HasFactory;
 	
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
 	public function material() {
 		return $this->belongsTo('App\Models\Material', 'material_id');
 	}
 
-	
+	/**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
 	protected $fillable = [
         'material_id',
 		'url',

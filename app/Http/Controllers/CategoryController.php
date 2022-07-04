@@ -83,7 +83,8 @@ class CategoryController extends Controller
     public function destroy($id)
     {
         $category = Category::find($id);
-		if (!($category->materials->isEmpty())) return redirect()->route('category.list')->with('warn','Категория, используемая материалом, не может быть удалена!');
+		if (!$category->materials->isEmpty()) 
+			return redirect()->route('category.list')->with('warn','Категория, используемая материалом, не может быть удалена!');
 		$category->delete();
         return redirect()->route('category.list')->with('success','Категория успешно удалена!');
     }

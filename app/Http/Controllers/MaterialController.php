@@ -34,7 +34,7 @@ class MaterialController extends Controller
 			->toArray();
 			$data = Material::whereIn('id', $search_data)->get();
 			return view('list-materials', compact('data', 'search'));
-		} else if ($tag) {
+		} elseif ($tag) {
 			$search_data = DB::table('tags')
 			->join('materials_tags', 'tags.id', '=', 'materials_tags.tag_id')
 			->where('name', $tag)
@@ -159,7 +159,8 @@ class MaterialController extends Controller
         $material = Material::find($id);
 		$tag = Tag::find($request->tag_id);
 		
-		if ($material->tags->contains($tag->id)) return redirect()->route('materials.show', $id)->with('warn','Тег и так присоединен к материалу!');
+		if ($material->tags->contains($tag->id)) 
+			return redirect()->route('materials.show', $id)->with('warn','Тег и так присоединен к материалу!');
 		
 		$material->tags()->attach($tag->id);
         return redirect()->route('materials.show', $id)->with('success','Тег присоединен к материалу!');
@@ -179,7 +180,8 @@ class MaterialController extends Controller
         $material = Material::find($id);
 		$tag = Tag::find($request->tag_id);
 		
-		if (!($material->tags->contains($tag->id))) return redirect()->route('materials.show', $id)->with('warn','Тег и так неприсоединен к материалу!');
+		if (!$material->tags->contains($tag->id)) 
+			return redirect()->route('materials.show', $id)->with('warn','Тег и так неприсоединен к материалу!');
 		
 		$material->tags()->detach($tag->id);
         return redirect()->route('materials.show', $id)->with('success','Тег успешно отсоединен от материала!');

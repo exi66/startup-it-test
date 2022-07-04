@@ -83,7 +83,8 @@ class TagController extends Controller
     public function destroy($id)
     {
         $tag = Tag::find($id);
-		if (!($tag->materials->isEmpty())) return redirect()->route('tag.list')->with('warn','Тег, который используется в материалах не может быть удален!');
+		if (!$tag->materials->isEmpty()) 
+			return redirect()->route('tag.list')->with('warn','Тег, который используется в материалах не может быть удален!');
 		$tag->delete();
         return redirect()->route('tag.list')->with('success','Тег успешно удален!');
     }

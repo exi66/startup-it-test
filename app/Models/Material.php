@@ -9,18 +9,32 @@ class Material extends Model
 {
     use HasFactory;
 	
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */	
 	public function links() {
 		return $this->hasMany('App\Models\Url');
 	}
 	
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */	
 	public function category() {
 		return $this->belongsTo('App\Models\Category');
 	}
-
+	
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
 	public function tags() {
 		return $this->belongsToMany('App\Models\Tag', 'materials_tags');
 	}
 	
+	/**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */	
 	protected $fillable = [
         'type',
         'category_id',

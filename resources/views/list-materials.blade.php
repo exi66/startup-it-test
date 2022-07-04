@@ -11,7 +11,7 @@
                 <div class="col-md-8">
                     <form>
                         <div class="input-group mb-3">
-                            <input type="text" name="search" class="form-control" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
+                            <input id="search" type="text" name="search" class="form-control" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
                             <button class="btn btn-primary" type="sumbit" id="button-addon1">Искать</button>
                         </div>
                     </form>
@@ -61,4 +61,23 @@
 
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+<script>
+function getSearchParameters() {
+    var prmstr = window.location.search.substr(1);
+    return prmstr != null && prmstr != "" ? transformToAssocArray(prmstr) : {};
+}
+
+function transformToAssocArray( prmstr ) {
+    var params = {};
+    var prmarr = prmstr.split("&");
+    for ( var i = 0; i < prmarr.length; i++) {
+        var tmparr = prmarr[i].split("=");
+        params[tmparr[0]] = tmparr[1];
+    }
+    return params;
+}
+
+var params = getSearchParameters();
+if (params.search) document.getElementById('search').value = decodeURIComponent(params.search.replace(/\+/g, '%20'));
+</script>
 @endpush

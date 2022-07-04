@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Url;
+use Illuminate\Support\Facades\Validator;
 
 class UrlController extends Controller
 {
@@ -35,11 +36,14 @@ class UrlController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request, [
+		$validator = Validator::make($request->all(), [
 			'material_id' => 'required|exists:materials,id',
 			'url' => 'required|url',
             'name' => 'nullable|string',
-        ]);
+        ])->validateWithBag('links');
+		
+		$validator->validated();
+		
         $input = $request->all();
 		$id = $request['material_id'];
         $url = Url::create($input);
@@ -65,7 +69,10 @@ class UrlController extends Controller
      */
     public function edit($id)
     {
-        //
+    	$url = Url::find($id);
+	    return response()->json([
+	      'data' => $url
+	    ]);
     }
 
     /**
@@ -77,7 +84,26 @@ class UrlController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+		$validator = Validator::make($request->all(), [
+			'material_id' => 'required|exists:materials,id',
+			'url' => 'required|url',
+            'name' => 'nullable|string',
+        ]);
+		
+		if ($validator->fails()) {
+			return response()->json([
+				'errors' => $validator->errors()
+			]);
+        }
+		
+		$validator->validated();
+		
+        $url = Url::find($id);
+		$url->update($request->all());
+		
+		return response()->json([
+			'success' => 'Ссылка успешно обновлена!'
+		]);
     }
 
     /**

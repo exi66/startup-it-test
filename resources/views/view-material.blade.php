@@ -68,7 +68,7 @@
 								{{ $link->name ? $link->name : $link->url  }}
                             </a>
                             <span class="text-nowrap d-flex">
-								<a class="text-decoration-none me-2" data-bs-toggle="modal" href="#exampleModalToggle" role="button">
+								<a class="text-decoration-none me-2 edit-button" edit-data="{{ route('url.edit', $link->id) }}" role="button">
 									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
 										<path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
 									</svg>
@@ -88,10 +88,19 @@
                     </ul>
                 </div>
             </div>
-			<div class="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel"
-				 tabindex="-1">
+			<div class="modal fade" id="exampleModalToggle" tabindex="-1">
 				<div class="modal-dialog modal-dialog-centered">
 					<div class="modal-content">
+						@if (count($errors->links) > 0)
+						<div class="alert-danger m-3 rounded p-1">
+							<strong>Ошибка!</strong> Возникла ошибка при вводе данных.<br>
+							<ul>
+							   @foreach ($errors->links->all() as $error)
+								 <li>{{ $error }}</li>
+							   @endforeach
+							</ul>
+						</div>
+						@endif					
 						{!! Form::open(array('route' => 'url.store','method'=>'POST')) !!}
 						{!! Form::hidden('material_id', $material->id, array('class' => 'd-none')) !!}
 						<div class="modal-header">
@@ -122,9 +131,104 @@
 						{!! Form::close() !!}
 					</div>
 				</div>
+			</div>
+			<div class="modal fade" id="exampleModalToggle1" tabindex="-1">
+				<div class="modal-dialog modal-dialog-centered">
+					<div class="modal-content">
+						<div class="alert-danger m-3 rounded p-1" id="edit-errors">
+
+						</div>
+						<div class="alert-success m-3 rounded p-1" id="edit-success">
+							
+						</div>							
+						<form id="edit-form" method="POST">
+							<input name="_method" type="hidden" value="PATCH">
+							<input type="hidden" name="_token" value="{{ csrf_token() }}" />
+							<input type="hidden" class="d-none" id="material_id" name="material_id">
+							<div class="modal-header">
+								<h5 class="modal-title" id="exampleModalToggleLabel1">Изменить ссылку</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+							</div>
+							<div class="modal-body">
+								<div class="form-floating mb-3">
+									<input type="text" class="form-control" name="name" placeholder="Добавьте подпись" id="edit-name">
+									<label for="edit-name">Подпись</label>
+									<div class="invalid-feedback">
+										Пожалуйста, заполните поле
+									</div>
+
+								</div>
+								<div class="form-floating mb-3">
+									<input type="text" class="form-control" placeholder="Добавьте ссылку" name="url" id="edit-url">
+									<label for="edit-url">Ссылка</label>
+									<div class="invalid-feedback">
+										Пожалуйста, заполните поле
+									</div>
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button type="submit" class="btn btn-primary">Сохранить</button>
+								<button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Закрыть</button>
+							</div>
+						</form>
+					</div>
+				</div>
 			</div>			
 @endsection
 
 @push('scripts')
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+<?php $links = $errors->hasBag('links'); ?>
+<script>
+var links = {!! json_encode($links) !!};
+$(document).ready(function(){
+	if (links) $('#exampleModalToggle').modal('show')
+})
+
+$('.edit-button').click(function() {
+    var url = $(this).attr('edit-data');
+	$('#edit-errors').hide();
+	$('#edit-success').hide();
+	$.ajax({
+        url: url,
+        type: 'GET',
+        async: false,
+        success: function(res){ 
+			return res;
+        }
+    }).then(function(res) {
+		$('#edit-form').attr('action', '/url/'+res.data.id+'/update');
+		$('#material_id').val(res.data.material_id);
+		$('#edit-name').val(res.data.name);
+		$('#edit-url').val(res.data.url);
+		$('#exampleModalToggle1').modal('show');
+	});
+});
+
+$("#edit-form").submit(function(e) {
+    e.preventDefault();
+    var form = $(this);
+    var actionUrl = form.attr('action');
+    $.ajax({
+        type: "POST",
+        url: actionUrl,
+        data: form.serialize(), // serializes the form's elements.
+        success: function(res) {
+			return res
+        }
+    }).then(function(res) {
+		if (res.errors) {
+			var html = Object.keys(res.errors).map(key => `${res.errors[key]}`).join("<br/>");
+			$('#edit-errors').html(html);
+			$('#edit-errors').show();
+		}
+		if (res.success) {
+			$('#edit-success').html(res.success);
+			$('#edit-success').show();
+		}
+	});
+    
+});
+</script>
 @endpush
