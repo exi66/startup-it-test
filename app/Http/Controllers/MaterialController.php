@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Request as FRequest;
+use DB;
 
 class MaterialController extends Controller
 {
@@ -18,47 +19,34 @@ class MaterialController extends Controller
      */
     public function index()
     {
-		$data = Material::all();
-		$search = FRequest::query('search');
-		$tag = FRequest::query('tag');
+		$search = strtolower(FRequest::query('search'));
+		$tag = strtolower(FRequest::query('tag'));
 		if ($search) {
-			$query = strtolower($search);
-			$search_data = array();
-			foreach ($data as $d) {
-				if (strpos(strtolower($d->name), $query) !== false) {
-					$search_data[] = $d;
-					continue;
-				}
-				if (strpos(strtolower($d->author), $query) !== false) {
-					$search_data[] = $d;
-					continue;
-				}
-				if (strpos(strtolower($d->category->name), $query) !== false) {
-					$search_data[] = $d;
-					continue;
-				}		
-				$tags = $d->tags->where('name', $query);
-				if (!$tags->isEmpty()) {
-					$search_data[] = $d;
-					continue;
-				}
-			}
-			$data = $search_data;
+			$search_data = DB::table('materials')
+			->join('materials_tags', 'materials.id', '=', 'materials_tags.material_id')
+			->join('categories', 'categories.id', '=', 'materials.category_id')
+			->join('tags', 'tags.id', '=', 'materials_tags.tag_id')
+			->where('materials.name', 'like', '%'.$search.'%')
+			->orWhere('materials.author', 'like', '%'.$search.'%')
+			->orWhere('categories.name', 'like', '%'.$search.'%')
+			->orwhere('tags.name', 'like', '%'.$search.'%')
+			->pluck('materials.id')
+			->toArray();
+			$data = Material::whereIn('id', $search_data)->get();
 			return view('list-materials', compact('data', 'search'));
 		} else if ($tag) {
-			$query = strtolower($tag);
-			$search_data = array();
-			foreach ($data as $d) {
-				$tags = $d->tags->where('name', $query);
-				if (!$tags->isEmpty()) {
-					$search_data[] = $d;
-					continue;
-				}					
-			}
-			$data = $search_data;
+			$search_data = DB::table('tags')
+			->join('materials_tags', 'tags.id', '=', 'materials_tags.tag_id')
+			->where('name', $tag)
+			->pluck('material_id')
+			->toArray();
+			$data = Material::whereIn('id', $search_data)->get();
 			return view('list-materials', compact('data', 'search'));
 		}
-        else return view('list-materials', compact('data', 'search'));
+        else {
+			$data = Material::all();
+			return view('list-materials', compact('data', 'search'));
+		}
     }
 
     /**
@@ -157,6 +145,12 @@ class MaterialController extends Controller
         return redirect()->route('materials.list')->with('success','Материал успешно удален!');
     }
 	
+	/**
+     * Attach the specified tag.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     */
 	public function add_tag(Request $request, $id)
     {
 		$this->validate($request, [
@@ -171,6 +165,12 @@ class MaterialController extends Controller
         return redirect()->route('materials.show', $id)->with('success','Тег присоединен к материалу!');
     }
 	
+	/**
+     * Deattach the specified tag.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     */
 	public function rm_tag(Request $request, $id)
     {
 		$this->validate($request, [
