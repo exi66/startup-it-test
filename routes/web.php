@@ -41,8 +41,6 @@ Route::delete('/tag/{id}/destroy', [TagController::class, 'destroy'])->name('tag
 Route::post('/tag/store', [TagController::class, 'store'])->name('tag.store');
 Route::patch('/tag/{id}/update', [TagController::class, 'update'])->name('tag.update');
 
-//Route::get('/url', [UrlController::class, 'index'])->name('url.list');
-//Route::get('/url/create', [UrlController::class, 'create'])->name('url.create');
 Route::get('/url/{id}/edit', [UrlController::class, 'edit'])->name('url.edit');
 Route::delete('/url/{id}/destroy', [UrlController::class, 'destroy'])->name('url.destroy');
 Route::post('/url/store', [UrlController::class, 'store'])->name('url.store');
