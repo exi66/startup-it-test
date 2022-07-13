@@ -8,20 +8,22 @@ use Illuminate\Database\Eloquent\Model;
 class Category extends Model
 {
     use HasFactory;
-	
-	/**
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */		
-	public function materials() {
-		return $this->hasMany('App\Models\Material');
-	}
-	
-	/**
+     */
+    public function materials()
+    {
+        return $this->hasMany('App\Models\Material');
+    }
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
-     */		
-	protected $fillable = [
+     * @property string $name
+     */
+    protected $fillable = [
         'name',
     ];
 }

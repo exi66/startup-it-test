@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      *
@@ -13,13 +12,16 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('urls', function (Blueprint $table) {
-            $table->id();
-			$table->foreignId('material_id')->constrained('materials');
-			$table->string('url');
-			$table->string('name')->nullable();
-            $table->timestamps();
-        });
+        Schema::create(
+            'urls',
+            function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('material_id')->constrained('materials');
+                $table->string('url');
+                $table->string('name')->nullable();
+                $table->timestamps();
+            }
+        );
     }
 
     /**

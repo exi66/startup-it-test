@@ -11,81 +11,91 @@ class UrlController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-		$validator = Validator::make($request->all(), [
-			'material_id' => 'required|exists:materials,id',
-			'url' => 'required|url',
-            'name' => 'nullable|string',
-        ])->validateWithBag('links');
-		
-		$validator->validated();
-		
+        Validator::make(
+            $request->all(),
+            [
+                'material_id' => 'required|exists:materials,id',
+                'url' => 'required|url',
+                'name' => 'nullable|string',
+            ]
+        )->validateWithBag('links');
+
         $input = $request->all();
-		$id = $request['material_id'];
-        $url = Url::create($input);
-        return redirect()->route('materials.show', $id)->with('success','Ссылка успешено создана!');
+        $id = $request['material_id'];
+        Url::create($input);
+        return redirect()->route('materials.show', $id)->with('success', 'Ссылка успешено создана!');
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
     public function edit($id)
     {
-    	$url = Url::find($id);
-	    return response()->json([
-	      'data' => $url
-	    ]);
+        $url = Url::find($id);
+        return response()->json(
+            [
+                'data' => $url
+            ]
+        );
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
-		$validator = Validator::make($request->all(), [
-			'material_id' => 'required|exists:materials,id',
-			'url' => 'required|url',
-            'name' => 'nullable|string',
-        ]);
-		
-		if ($validator->fails()) {
-			return response()->json([
-				'errors' => $validator->errors()
-			]);
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'material_id' => 'required|exists:materials,id',
+                'url' => 'required|url',
+                'name' => 'nullable|string',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return response()->json(
+                [
+                    'errors' => $validator->errors()
+                ]
+            );
         }
-		
-		$validator->validated();
-		
+
+        $validator->validated();
+
         $url = Url::find($id);
-		$url->update($request->all());
-		
-		return response()->json([
-			'success' => 'Ссылка успешно обновлена!'
-		]);
+        $url->update($request->all());
+
+        return response()->json(
+            [
+                'success' => 'Ссылка успешно обновлена!'
+            ]
+        );
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param int $id
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
      */
     public function destroy($id)
     {
         $url = Url::find($id);
-		$id = $url->material_id;
-		$url->delete();
-        return redirect()->route('materials.show', $id)->with('success','Ссылка успешно удалена!');
+        $id = $url->material_id;
+        $url->delete();
+        return redirect()->route('materials.show', $id)->with('success', 'Ссылка успешно удалена!');
     }
 }
